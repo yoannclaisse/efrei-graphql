@@ -1,0 +1,33 @@
+// Ceci est un entrypoint pour créer la DB avec prisma, il se sert des Model ci-dessous
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// genere le code pour se connecter a la DB
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Définit manuellemnt, peut être générer par un "prisma db pull", si la DB existe déja
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  email    String?   
+  todos    Todo[]
+}
+
+model Todo {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+}
