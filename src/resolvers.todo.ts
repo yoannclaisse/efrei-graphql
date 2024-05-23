@@ -45,4 +45,14 @@ export class TodoResolver {
       },
     });
   }
+
+  @Query(() => User, { nullable: true })
+  async userByTodoId(@Args('todoId', { type: () => Int }) todoId: number): Promise<User | null> {
+    const todo = await this.prismaService.todo.findUnique({
+      where: { id: todoId },
+      include: { user: true },
+    });
+
+    return todo?.user || null;
+  }
 }
