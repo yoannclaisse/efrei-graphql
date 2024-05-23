@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { PrismaService } from './prisma.service'
-// import { TodoResolver } from './resolvers.todo'
+import { TodoResolver } from './resolvers.todo'
 import { UserResolver } from './resolvers.user'
 import { join } from 'path'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
@@ -17,7 +17,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
   controllers: [],
   providers: [PrismaService, 
     UserResolver, 
-    // TodoResolver
+    TodoResolver
     
   ],
 })
