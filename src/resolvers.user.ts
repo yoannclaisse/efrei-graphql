@@ -51,6 +51,21 @@ export class UserResolver {
     return this.prismaService.user.findMany();
   }
 
+  // userExists
+  @Query(() => Number, { nullable: true })
+  async userExists(
+    @Args('username', { type: () => String }) username: string,
+    @Args('password', { type: () => String }) password: string
+  ): Promise<Number> {
+    return this.prismaService.user.count({
+      where: {
+        username: username,
+        password: sha256(password)
+      }
+    })
+  }
+
+
   // Get user by id
   @Query(() => User, { nullable: true })
   async userById(@Args('id', { type: () => Int }) id: number): Promise<User | null> {
