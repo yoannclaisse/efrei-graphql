@@ -15,6 +15,9 @@ export class User {
   @IsEmail()
   email?: string | null;
 
+  @Field(() => String, { nullable: true })  // Ajout du champ password
+  password?: string | null;
+
   @Field(() => [Todo], { nullable: true })
   todos?: Todo[] | null;
 }
