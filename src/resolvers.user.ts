@@ -4,6 +4,7 @@ import { User } from './user';
 import { PrismaService } from './prisma.service';
 import { Todo } from './todo';
 // import { TodoCreateInput } from './resolvers.todo';
+import { sha256 } from 'js-sha256';
 
 @InputType()
 class UserUniqueInput {
@@ -21,6 +22,9 @@ class UserCreateInput {
 
   @Field({ nullable: true })
   username: string;
+
+  @Field()
+  password: string;
 
   // @Field(() => [TodoCreateInput], { nullable: true })
   // todos: Todo[];
@@ -105,10 +109,12 @@ export class UserResolver {
   // Add user
   @Mutation(() => User)
   async addUser(@Args('data') data: UserCreateInput): Promise<User> {
+    const hashedPassword = sha256(data.password)
     return this.prismaService.user.create({
       data: {
         username: data.username,
-        email: data.email
+        email: data.email,
+        password: hashedPassword
       },
     });
   }
