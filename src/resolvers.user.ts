@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, Context, ResolveField, Root, InputType, Field, Int } from '@nestjs/graphql';
-import { Inject } from '@nestjs/common';
+import { ConflictException, Inject } from '@nestjs/common';
 import { User } from './user';
 import { PrismaService } from './prisma.service';
 import { Todo } from './todo';
@@ -107,17 +107,41 @@ export class UserResolver {
   }
 
   // Add user
+  // @Mutation(() => User)
+  // async addUser(@Args('data') data: UserCreateInput): Promise<User> {
+  //   const hashedPassword = sha256(data.password)
+  //   return this.prismaService.user.create({
+  //     data: {
+  //       username: data.username,
+  //       email: data.email,
+  //       password: hashedPassword
+  //     },
+  //   });
+  // }
   @Mutation(() => User)
   async addUser(@Args('data') data: UserCreateInput): Promise<User> {
-    const hashedPassword = sha256(data.password)
+    // Vérifier si un utilisateur avec le même username existe déjà
+    const existingUser = await this.prismaService.user.findUnique({
+      where: { username: data.username },
+    });
+
+    if (existingUser) {
+      // Si un utilisateur avec le même username existe, lancer une exception
+      throw new ConflictException('Username already taken');
+    }
+
+    // Hacher le mot de passe
+    const hashedPassword = sha256(data.password).toString();
+
+    // Créer un nouvel utilisateur
     return this.prismaService.user.create({
       data: {
-        username: data.username,
-        email: data.email,
-        password: hashedPassword
+        ...data,
+        password: hashedPassword,
       },
     });
   }
+
 
   // Update user
   @Mutation(() => User)
