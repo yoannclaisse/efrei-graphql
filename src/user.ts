@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, HideField } from '@nestjs/graphql';
 import { IsEmail } from 'class-validator';
 import { Todo } from './todo';
 
@@ -11,12 +11,12 @@ export class User {
   @Field()
   username: string;
 
-  @Field(() => String, { nullable: true })
+  @Field()
   @IsEmail()
-  email?: string | null;
+  email?: string;
 
-  @Field(() => String, { nullable: true })  // Ajout du champ password
-  password?: string | null;
+  @HideField()
+  password?: string;
 
   @Field(() => [Todo], { nullable: true })
   todos?: Todo[] | null;
