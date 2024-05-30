@@ -66,6 +66,24 @@ export class UserResolver {
   }
 
 
+  @Query(() => Number)
+  async getUserId(
+    @Args('username', { type: () => String }) username: string,
+    @Args('password', { type: () => String }) password: string
+  ): Promise<Number> {
+    const user = await this.prismaService.user.findUnique({
+      where: { 
+        username: username,
+        password: sha256(password)
+      },
+      select: { id: true },
+    });
+    if(!user) {
+      throw new Error('tu as oublié ton mot de passe et/ou login')
+    }
+    return user.id
+  }
+
   // Get user by id
   @Query(() => User, { nullable: true })
   async userById(@Args('id', { type: () => Int }) id: number): Promise<User | null> {
