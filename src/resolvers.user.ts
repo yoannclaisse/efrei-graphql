@@ -1,4 +1,16 @@
-import { Resolver, Query, Mutation, Args, Context, ResolveField, Root, InputType, Field, Int, HideField } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Context,
+  ResolveField,
+  Root,
+  InputType,
+  Field,
+  Int,
+  HideField,
+} from '@nestjs/graphql';
 import { ConflictException, Inject } from '@nestjs/common';
 import { User } from './user';
 import { PrismaService } from './prisma.service';
@@ -41,7 +53,7 @@ class UserUpdateInput {
 
 @Resolver(User)
 export class UserResolver {
-  constructor(@Inject(PrismaService) private prismaService: PrismaService) { }
+  constructor(@Inject(PrismaService) private prismaService: PrismaService) {}
 
   // QUERIES USER
 
@@ -55,46 +67,49 @@ export class UserResolver {
   @Query(() => Number, { nullable: true })
   async userExists(
     @Args('username', { type: () => String }) username: string,
-    @Args('password', { type: () => String }) password: string
-  ): Promise<Number> {
+    @Args('password', { type: () => String }) password: string,
+  ): Promise<number> {
     return this.prismaService.user.count({
       where: {
         username: username,
-        password: sha256(password)
-      }
-    })
+        password: sha256(password),
+      },
+    });
   }
-
 
   @Query(() => Number)
   async getUserId(
     @Args('username', { type: () => String }) username: string,
-    @Args('password', { type: () => String }) password: string
-  ): Promise<Number> {
+    @Args('password', { type: () => String }) password: string,
+  ): Promise<number> {
     const user = await this.prismaService.user.findUnique({
-      where: { 
+      where: {
         username: username,
-        password: sha256(password)
+        password: sha256(password),
       },
       select: { id: true },
     });
-    if(!user) {
-      throw new Error('tu as oublié ton mot de passe et/ou login')
+    if (!user) {
+      throw new Error('tu as oublié ton mot de passe et/ou login');
     }
-    return user.id
+    return user.id;
   }
 
   // Get user by id
   @Query(() => User, { nullable: true })
-  async userById(@Args('id', { type: () => Int }) id: number): Promise<User | null> {
+  async userById(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<User | null> {
     return this.prismaService.user.findUnique({
       where: { id },
     });
   }
 
-  // get user by id and todos 
+  // get user by id and todos
   @Query(() => User, { nullable: true })
-  async userWithTodosById(@Args('id', { type: () => Int }) id: number): Promise<User | null> {
+  async userWithTodosById(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({
       where: { id },
       include: {
@@ -106,7 +121,7 @@ export class UserResolver {
     if (!user) return null;
 
     // Map todos to include the user property
-    const todosWithUser = user.todos.map(todo => ({
+    const todosWithUser = user.todos.map((todo) => ({
       ...todo,
       user: {
         id: user.id,
@@ -125,7 +140,9 @@ export class UserResolver {
 
   // Delete user and todos
   @Mutation(() => User, { nullable: true })
-  async deleteUser(@Args('id', { type: () => Int }) id: number): Promise<User | null> {
+  async deleteUser(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<User | null> {
     // Supprimer toutes les Todos associées à l'utilisateur
     await this.prismaService.todo.deleteMany({
       where: {
@@ -174,7 +191,6 @@ export class UserResolver {
       },
     });
   }
-
 
   // Update user
   @Mutation(() => User)

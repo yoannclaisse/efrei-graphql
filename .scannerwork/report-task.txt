@@ -1,0 +1,6 @@
+projectKey=efrei-graphql
+serverUrl=http://localhost:9000
+serverVersion=9.9.5.90363
+dashboardUrl=http://localhost:9000/dashboard?id=efrei-graphql
+ceTaskId=AZAG2Kut3J-N9QmUpupp
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AZAG2Kut3J-N9QmUpupp
